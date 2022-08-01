@@ -1,0 +1,64 @@
+#dynamic way
+import pandas as pd
+import scipy.stats as s
+df=pd.read_excel('/content/drive/MyDrive/Book1.xlsx')
+print(df)
+df_shape=df.shape
+print(df_shape)
+N=df_shape[0]*(df_shape[1]-1)
+print(N)
+z=df.columns
+z=z[1:]
+#print(len(z))
+#RSS CALCULATE CHEYALIprint(z)
+k=[ j**2  for i in z for j in df[i].tolist()]
+RSS=sum(k)
+print("RSS:",RSS)
+l=[ df[i].sum() for i in z ]#eachrow sum
+print("eachrowsum:",l)
+l2=[i**2 for i in l]
+print("bj**2 is :",l2)
+df['colsum']=df.sum(axis=1)
+l1=df['colsum'].tolist()
+print(l1)
+ti2=[i**2 for i in l1]
+df=df.drop(['colsum'],axis=1)
+G=sum(l1)
+print("Gvalue is :",G)
+print("ti2 is :",sum(ti2))
+print("bj2 sum is :",sum(l2))
+#print(df)
+cf=(G**2)/N
+print("correfction factor :cf:",cf)
+SST=RSS-cf
+print("SST:",SST)
+SStr=(sum(ti2)/(df_shape[1]-1))-cf
+print("sstr:",SStr)
+SSb=(sum(l2)/df_shape[0])-cf
+print("ssb is :",SSb)
+SSe=SST-SStr-SSb
+print("SSe is :",SSe)
+Mstr=SStr/(df_shape[0]-1)
+print("Mstr:",Mstr)
+Msb=SSb/(df_shape[1]-2)
+print("Msb:",Msb)
+Mse=(SSe)/((df_shape[0]-1)*(df_shape[1]-2))
+Ftr=(Mstr/Mse)
+Ftb=(Msb/Mse)
+print("Ftr is :",Ftr)
+print("Ftb is :",Ftb)
+if(Ftr<1):
+  Ftr=Mse/Mstr
+tablevalue_1=s.f.ppf(1-0.05,df_shape[0]-1,((df_shape[0]-1)*(df_shape[1]-2)))
+tablevalue_2=s.f.ppf(1-0.05,df_shape[1]-2,((df_shape[0]-1)*(df_shape[1]-2)))
+print(tablevalue_1)
+print(tablevalue_2)
+print("inference:")
+if(Ftr>tablevalue_1):
+  print("reject the treatments")
+else:
+  print("accept the requirements")
+if(Ftb>tablevalue_2):
+  print("reject the blocks")
+else:
+  print("accept the blocks")
